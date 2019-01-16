@@ -1,0 +1,10 @@
+vendor
+frontend/web/assets/*
+frontend/runtime/logs/*
+frontend/runtime/cache/*
+frontend/runtime/debug/*
+backend/web/assets/*
+backend/runtime/logs/*
+backend/runtime/cache/*
+backend/runtime/debug/*
+
