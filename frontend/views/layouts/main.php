@@ -31,7 +31,7 @@ AppAsset::register($this);
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
-    	'brandImage' => Yii::$app->homeUrl . "/images/logo.jpg",
+    	'brandImage' => Yii::$app->homeUrl . "images/logo.jpg",
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
