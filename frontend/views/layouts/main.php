@@ -31,14 +31,16 @@ AppAsset::register($this);
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
+    	'brandImage' => Yii::$app->homeUrl . "/images/logo.jpg",
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
+       	'id' => 'main-nav'
     ]);
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
+        ['label' => 'Start Test', 'url' => ['/wizard/quiz']],
+//         ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
