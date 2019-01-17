@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-print_r($models); die;
+// print_r($models); die;
 $correctAnswers = 0;
 $tbody = '<tbody>';
 foreach ($models as $model):

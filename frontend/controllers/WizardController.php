@@ -60,7 +60,8 @@ class WizardController extends \yii\web\Controller {
 	 */
 	public function quizAfterWizard($event)
 	{
-		$event->data = $this->render('result', ['models' => $event->stepData['question']]);
+// 		$event->data = $this->render('result', ['models' => $event->stepData['question']]);
+		return $this->redirect('quiz');
 	}
 	
 	/**
