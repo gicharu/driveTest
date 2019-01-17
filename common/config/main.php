@@ -31,16 +31,16 @@ return [
     	],
     ],
 	'modules' => [
-		'user' => [
-			'class' => 'dektrium\user\Module',
-			'enableUnconfirmedLogin' => true,
-			'enableRegistration' => true,
-			'enableConfirmation' => false,
-			'enableFlashMessages' => false,
-			'confirmWithin' => 21600,
-			'cost' => 12,
-			'admins' => ['admin'],
-			'adminPermission' => 'ADMIN',
-		],
+// 		'user' => [
+// 			'class' => 'dektrium\user\Module',
+// 			'enableUnconfirmedLogin' => true,
+// 			'enableRegistration' => true,
+// 			'enableConfirmation' => false,
+// 			'enableFlashMessages' => false,
+// 			'confirmWithin' => 21600,
+// 			'cost' => 12,
+// 			'admins' => ['admin'],
+// 			'adminPermission' => 'ADMIN',
+// 		],
 	]
 ];
