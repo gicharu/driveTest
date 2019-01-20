@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "questions".
@@ -23,6 +25,13 @@ class Questions extends \yii\db\ActiveRecord
 	
 	public $currentQuestion;
 	public $expired = false;
+	
+	public function behaviors() {
+		return [
+			['class' => TimestampBehavior::className()],
+			['class' => BlameableBehavior::className()]
+		];
+	}
 	
     /**
      * {@inheritdoc}
