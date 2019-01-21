@@ -42,5 +42,8 @@ return [
 			'admins' => ['admin'],
 			'adminPermission' => 'ADMIN',
 		],
+		'gridview' =>  [
+			'class' => '\kartik\grid\Module'
+		]
 	]
 ];

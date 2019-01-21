@@ -1,10 +1,14 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use common\models\Questions;
 use vova07\imperavi\Widget;
+use yii\helpers\Html;
 use yii\helpers\Url;
-
+use kartik\builder\TabularForm;
+use kartik\form\ActiveForm;
+use kartik\icons\Icon;
+use yii\helpers\VarDumper;
+VarDumper::dump(Yii::$app->request, 10, true); die;
 /* @var $this yii\web\View */
 /* @var $model common\models\Questions */
 /* @var $form yii\widgets\ActiveForm */
@@ -19,12 +23,13 @@ use yii\helpers\Url;
     <?= $form->field($model, 'description')->widget(Widget::className(), [
     'settings' => [
         'minHeight' => 200,
-    	'imageUpload' => Url::to(['/image/image-upload']),
-    	'imageDelete' => Url::to(['/image/file-delete']),
-    	'imageManagerJson' => Url::to(['/image/images-get']),
-    	'fileUpload' => Url::to(['/default/file-upload']),
-    	'fileDelete' => Url::to(['/default/file-delete']),
-    	'fileManagerJson' => Url::to(['/default/files-get']),
+    	'imageUpload' => Url::to(['/media/image-upload']),
+    	'imageDelete' => Url::to(['/media/file-delete']),
+    	'imageManagerJson' => Url::to(['/media/images-get']),
+    	'fileUpload' => Url::to(['/media/file-upload']),
+    	'fileDelete' => Url::to(['/media/file-delete']),
+    	'fileManagerJson' => Url::to(['/media/files-get']),
+    	
         'plugins' => [
             'clips',
         	'imagemanager',
@@ -41,11 +46,22 @@ use yii\helpers\Url;
     ],
 ]);?>
 
-    <?= $form->field($model, 'score')->textInput() ?>
-
+    <?= $form->field($model, 'score')->dropDownList(Questions::SCORE) ?>
+	
+	<?=
+	TabularForm::widget([
+		'dataProvider'=>$dataProvider,
+		'form'=>$form,
+		'attributes'=>$answerModel->formAttribs,
+		'gridSettings'=>['condensed'=>true],
+		'checkboxColumn' => false,
+		'actionColumn' => false
+	]);
+	?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Icon::show('save') . 'Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Icon::show('times') . 'Cancel', ['tests/index'], ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

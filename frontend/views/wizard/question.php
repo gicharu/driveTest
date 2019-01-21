@@ -4,7 +4,14 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\Html;
-
+use common\models\Questions;
+use beastbytes\wizard\WizardEvent;
+/**
+ * 
+ * @var $this View
+ * @var $model Questions
+ * @var $event WizardEvent
+ */
 $this->title = 'Quiz Wizard';
 
 //echo $event->sender->menu->run();
@@ -16,6 +23,7 @@ echo Html::tag('h2', strtr('Question {n} of {t}', [
 $form = ActiveForm::begin();
 echo $form->field($model, 'id')->hiddenInput()->label(false);
 echo Html::label($model->question);
+echo $model->description;
 $answerArray = ArrayHelper::map($model->answers, 'id', 'answer');
 echo Html::radioList('answer', null, $answerArray);
 echo Html::beginTag('div', ['class' => 'form-row buttons']);

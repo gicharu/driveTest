@@ -22,6 +22,12 @@ use yii\behaviors\BlameableBehavior;
  */
 class Questions extends \yii\db\ActiveRecord
 {
+	const SCORE = [
+		1 => 'Easy',
+		5 => 'Medium',
+		10 => 'Difficult'
+	];
+	
 	
 	public $currentQuestion;
 	public $expired = false;
@@ -69,6 +75,11 @@ class Questions extends \yii\db\ActiveRecord
             'updated_by' => 'Updated By',
         ];
     }
+    
+    public function beforeDelete() {
+    	Answers::deleteAll(['questionId' => $this->id]);
+    	return parent::beforeDelete();
+    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -82,10 +93,15 @@ class Questions extends \yii\db\ActiveRecord
     {
     	return date('d-m-Y', $this->created_at);
     }
+    public function getScoreText()
+    
+    {
+    	return self::SCORE[$this->score];
+    }
     
     public function fields()
     {
-    	return array_merge(parent::fields(), ['createdDate']);
+    	return array_merge(parent::fields(), ['createdDate', 'scoreText']);
     }
     
    

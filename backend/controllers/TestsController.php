@@ -9,6 +9,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\VarDumper;
+use yii\data\ArrayDataProvider;
+use common\models\Answers;
+use yii\base\Model;
 
 /**
  * TestsController implements the CRUD actions for Questions model.
@@ -65,13 +68,51 @@ class TestsController extends Controller
     public function actionCreate()
     {
         $model = new Questions();
-
+		$answerModel = new Answers();
+// 		VarDumper::dump(array_fill(0, 4, $answerModel), 20, true); die;
+        $dataProvider = new ArrayDataProvider([
+        	'allModels' => array_fill(0, 4, $answerModel)
+        ]);
+        $transaction = \Yii::$app->db->beginTransaction();
+        $transactionStatus = true;
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        	$answerModels = $dataProvider->getModels();
+        	$postData = \Yii::$app->request->post($answerModel->formName());
+        	if(Model::loadMultiple($answerModels, \Yii::$app->request->post())) {
+        		$transactionStatus = false;
+//         		die;
+        		for ($key = 0; $key <= (count($answerModels) - 1); $key++) {
+//         		VarDumper::dump($key,10,true); 
+        			unset($answerModels[$key]->id);
+        			$answerModels[$key]->setIsNewRecord(true);
+        			$answerModels[$key]->questionId = $model->id;
+        			$answerModels[$key]->answer = $postData[$key]['answer'];
+        			$answerModels[$key]->correct = $postData[$key]['correct'];
+        			if($answerModels[$key]->save()) {
+        				$transactionStatus = true;
+        			}
+        		}
+        	}
+//         	die;
+        	if($transactionStatus) {
+        		$transaction->commit();
+        		Yii::$app->session
+        		->setFlash('success', 'Question added successfully');
+        		return $this->redirect(['index']);
+        	}
+        	if($transactionStatus == false) {
+        		$transaction->rollBack();
+        		\Yii::error($answerModel->getErrors());
+        		Yii::$app->session
+        		->setFlash('danger', 'An error occurred while saving the question, contact your administrator');
+        	}
         }
 
         return $this->render('create', [
             'model' => $model,
+        	'dataProvider' => $dataProvider,
+        	'answerModel' => $answerModel
         ]);
     }
 
@@ -85,13 +126,39 @@ class TestsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $dataProvider = new ActiveDataProvider([
+        	'query' => Answers::find()->where(['questionId' => $model->id])
+        ]);
+        $transaction = \Yii::$app->db->beginTransaction();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        	$transactionStatus = true;
+        	$answerModels = $dataProvider->getModels();
+			$postData = $_POST['Answers']; 
+			sort($postData);
+     
+        	foreach ($answerModels as $key => $answerModel) {
+        		$answerModel->answer = $postData[$key]['answer'];
+        		$answerModel->correct = $postData[$key]['correct'];
+        		if(false == $answerModel->save()) {
+        			$transactionStatus = false;
+        		}
+        	}
+        	if($transactionStatus) {
+        		$transaction->commit();
+        		Yii::$app->session
+        		->setFlash('success', 'Question saved successfully');
+            	return $this->redirect(['index']);
+        	}
+        	if($transactionStatus == false) {
+        		$transaction->rollBack();
+        		Yii::$app->session
+        		->setFlash('danger', 'An error occurred while saving the question, contact your administrator');
+        	}
         }
 
         return $this->render('update', [
             'model' => $model,
+        	'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -104,7 +171,13 @@ class TestsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+    	if($this->findModel($id)->delete()) {
+    		Yii::$app->session
+    		->setFlash('success', 'Question deleted successfully');
+    	} else {
+    		Yii::$app->session
+    		->setFlash('danger', 'An error occurred while deleting the question, contact your administrator');
+    	}
 
         return $this->redirect(['index']);
     }

@@ -21,10 +21,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= DataTable::widget([
         'data' => $dataProvider->getModels(),
+    	'tableOptions' => [
+        	'class' => 'table table-stripped',
+    	],
         'columns' => [
             ['data' => 'id', 'visible' => false],
             'question',
-            'score',
+        	['data' => 'scoreText', 'title' => 'Score'],
         	['data' => 'createdDate', 'title' => 'Created on'],
             //'updated_at',
             //'created_by',
@@ -46,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
         		'url' => Url::to(['tests/delete']),
         		'options' => [
         			'class' => 'btn btn-danger btn-xs text-center',
-        			//'value' => \yii\helpers\Url::to('copy?'),
+        			'data-method' => 'post',
         			'title' => 'delete EVA attribute'
         		],
         		'queryParams' => ['id'],

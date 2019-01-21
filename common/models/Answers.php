@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use kartik\builder\TabularForm;
 
 /**
  * This is the model class for table "answers".
@@ -56,5 +57,31 @@ class Answers extends \yii\db\ActiveRecord
     public function getQuestion()
     {
         return $this->hasOne(Questions::className(), ['id' => 'questionId']);
+    }
+    
+    public function getFormAttribs() {
+    	$attribs = [
+    		'id'=>[ // primary key attribute
+    			'type'=>TabularForm::INPUT_HIDDEN,
+    			'columnOptions'=>['hidden'=>true]
+    		], 
+    		'answer'=> [
+    			'type' => TabularForm::INPUT_TEXT
+    		],
+    		'correct'=> [
+    			'type' => TabularForm::INPUT_DROPDOWN_LIST,
+    			'items' => [0 => 'No', 1 => 'Yes']
+    		],
+    		'questionId' => [
+    			'type'=>TabularForm::INPUT_HIDDEN, 
+    			'columnOptions'=>['hidden'=>true]
+    		],
+    		
+    	];
+    	if($this->isNewRecord) {
+    		unset($attribs['id']);
+    	}
+    	return $attribs;
+    	
     }
 }
