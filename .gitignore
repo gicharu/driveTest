@@ -33,3 +33,12 @@ phpunit.phar
 
 # vagrant runtime
 /.vagrant
+
+common/config/main-local.php
+backend/config/main-local.php
+frontend/config/main-local.php
+
+common/config/params-local.php
+backend/config/params-local.php
+frontend/config/params-local.php
+
