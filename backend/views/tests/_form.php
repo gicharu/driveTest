@@ -8,7 +8,6 @@ use kartik\builder\TabularForm;
 use kartik\form\ActiveForm;
 use kartik\icons\Icon;
 use yii\helpers\VarDumper;
-VarDumper::dump(Yii::$app->request, 10, true); die;
 /* @var $this yii\web\View */
 /* @var $model common\models\Questions */
 /* @var $form yii\widgets\ActiveForm */
