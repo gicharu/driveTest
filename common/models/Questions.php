@@ -78,5 +78,15 @@ class Questions extends \yii\db\ActiveRecord
         return $this->hasMany(Answers::className(), ['questionId' => 'id']);
     }
     
+    public function getCreatedDate()
+    {
+    	return date('d-m-Y', $this->created_at);
+    }
+    
+    public function fields()
+    {
+    	return array_merge(parent::fields(), ['createdDate']);
+    }
+    
    
 }
