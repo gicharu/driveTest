@@ -10,6 +10,7 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+	'defaultRoute' => 'wizard/quiz',
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
