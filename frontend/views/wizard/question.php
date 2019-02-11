@@ -36,7 +36,7 @@ ActiveForm::end();
 echo Html::tag('div', Html::tag('div', '', [
     'id'    => 'meter',
     'style' => 'position:absolute;top:0;left:0;height:100%;width:100%;background:#0f0;z-index:-1;'
-]).Html::tag('span', $event->sender->timeout, ['id' => 'time-left']) . ' seconds', ['style' => 'height:1.5em;position:relative;text-align:center;']);
+]).Html::tag('span', $event->sender->timeout, ['id' => 'time-left']) . ' seconds', ['style' => 'height:1.5em;position:relative;text-align:center;', 'class' => 'col-xs-12']);
 
 
 $this->registerJs('function timeout(t) {

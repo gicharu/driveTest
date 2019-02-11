@@ -5,24 +5,33 @@ namespace frontend\controllers;
 use beastbytes\wizard\WizardBehavior;
 use common\models\Questions;
 use yii\db\Expression;
+use yii\helpers\VarDumper;
+use beastbytes\wizard\WizardEvent;
 
 class WizardController extends \yii\web\Controller {
 	
 	public $questions;
 	
 	public function init() {
-		$this->questions = Questions::find()
-		->orderBy(new Expression('RAND()'))
-		->limit(10)
-		->asArray()
-		->all();
+		$session = \Yii::$app->session;
+		if(isset( $session['questions'])) {
+			$this->questions = $session['questions'];
+		} else {
+			$this->questions = Questions::find()
+			->orderBy(new Expression('RAND()'))
+			->limit(10)
+			->asArray()
+			->all();
+			$session['questions'] = $this->questions;
+			
+		}
 	}
 	
 	
 	public function beforeAction($action) {
 		$config = [
 			'steps'       => ['question'],
-			'timeout'     => 30,
+			'timeout'     => 60,
 			'forwardOnly' => true,
 			'events'      => [
 				WizardBehavior::EVENT_WIZARD_STEP => [$this, $action->id.'WizardStep'],
@@ -55,13 +64,31 @@ class WizardController extends \yii\web\Controller {
 	
 	
 	/**
-	 * Quiz step expired
-	 * @param WizardEvent The event
+	 * @param $event WizardEvent
 	 */
 	public function quizAfterWizard($event)
 	{
-// 		$event->data = $this->render('result', ['models' => $event->stepData['question']]);
-		return $this->redirect('quiz');
+		$quizMap = \Yii::$app->session['quizMap'];
+		$rsQuestions = Questions::find()
+		->where(['IN', 'id', array_flip($quizMap)])
+		->all();
+		$resultsArray = [];
+		$score = 0;
+		foreach ($rsQuestions as $question) {
+			$correct = 'Fail';
+			if($question->correctAnswer == $quizMap[$question->id]) {
+				$correct = 'Pass';
+				$score++;
+			}
+			$resultsArray[] = ['question' => $question->question, 'correct' => $correct];
+		}
+// 		VarDumper::dump($resultsArray, 10,1); die;
+		$event->data = $this->render('result', [
+			'resultsArray' => $resultsArray,
+			'score' => $score
+			
+		]);
+// 		return $this->redirect('quiz');
 	}
 	
 	/**
@@ -76,15 +103,19 @@ class WizardController extends \yii\web\Controller {
 	
 	/**
 	 * Process steps from the quiz
-	 * @param WizardEvent The event
+	 * @param $event WizardEvent The event
 	 */
 	public function quizWizardStep($event)
 	{
 		$model = Questions::findOne($this->questions[$event->n]['id']);
 		$t = count($this->questions);
 		if(\Yii::$app->request->isPost) {
-// 			print_r($_POST); die;
-			if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+// 			var_dump($model->correctAnswer); die;
+			$session = \Yii::$app->session;
+			$quizMap = is_null($session['quizMap']) ? [] : $session['quizMap'];
+			$quizMap[$_POST['Questions']['id']] =  isset($_POST['answer']) ? $_POST['answer'] : '';
+			$session['quizMap'] = $quizMap;
+// 			if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
 				$event->data     = $model;
 				$event->nextStep = ($event->n < $t - 1
 						? WizardBehavior::DIRECTION_REPEAT
@@ -92,7 +123,7 @@ class WizardController extends \yii\web\Controller {
 						);
 				$event->handled  = true;
 				return; 
-			} 
+// 			} 
 		}
 		$event->data = $this->render('question', compact('event', 'model', 't'));
 	}

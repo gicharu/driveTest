@@ -88,6 +88,10 @@ class Questions extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Answers::className(), ['questionId' => 'id']);
     }
+    public function getCorrectAnswer() {
+    	$rsAnswer = Answers::find()->where(['questionId' => $this->id, 'correct' => 1])->one();
+    	return $rsAnswer->id;
+    }
     
     public function getCreatedDate()
     {
